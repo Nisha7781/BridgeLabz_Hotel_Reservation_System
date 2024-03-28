@@ -43,28 +43,27 @@ public class HotelReservationSystem
     public String findCheapestHotel(LocalDate startDate, LocalDate endDate)
     {
         int minTotalRate = Integer.MAX_VALUE;
-        String cheapestHotel = "";
+        StringBuilder cheapestHotels = new StringBuilder();
 
         for (Map.Entry<String, Hotel> entry : hotels.entrySet())
         {
             int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
             if (totalRate < minTotalRate) {
                 minTotalRate = totalRate;
-                cheapestHotel = entry.getKey();
-            } else if (totalRate == minTotalRate && entry.getKey().compareTo(cheapestHotel) < 0) {
-                cheapestHotel = entry.getKey();
+                cheapestHotels = new StringBuilder(entry.getKey());
+            } else if (totalRate == minTotalRate) {
+                cheapestHotels.append(" and ").append(entry.getKey());
             }
         }
 
-        return cheapestHotel + ", Total Rates: $" + minTotalRate;
+        return cheapestHotels + " with Total Rates: $" + minTotalRate;
     }
 
     private int calculateTotalRate(Hotel hotel, LocalDate startDate, LocalDate endDate)
     {
         int totalRate = 0;
         LocalDate date = startDate;
-        while (!date.isAfter(endDate))
-        {
+        while (!date.isAfter(endDate)) {
             String dayType = getDayType(date);
             totalRate += hotel.getRate(dayType);
             date = date.plusDays(1);

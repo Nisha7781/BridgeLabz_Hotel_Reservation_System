@@ -1,4 +1,7 @@
 package org.Hotel_reservation;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +31,6 @@ public class Hotel
         return name;
     }
 }
-
 
 
 

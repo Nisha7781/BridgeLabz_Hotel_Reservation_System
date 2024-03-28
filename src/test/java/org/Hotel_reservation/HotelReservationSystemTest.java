@@ -2,7 +2,6 @@ package org.Hotel_reservation;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDate;
 
 public class HotelReservationSystemTest
@@ -48,6 +47,6 @@ public class HotelReservationSystemTest
         rs.addRate("Ridgewood", "weekday", 220);
         rs.addRate("Ridgewood", "weekend", 150);
 
-        assertEquals("Lakewood, Total Rates: $220", rs.findCheapestHotel(LocalDate.of(2020, 9, 10), LocalDate.of(2020, 9, 11)));
+        assertEquals("Bridgewood and Lakewood with Total Rates: $200", rs.findCheapestHotel(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
     }
 }
