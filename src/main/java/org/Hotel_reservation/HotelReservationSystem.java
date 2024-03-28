@@ -1,8 +1,7 @@
-
 package org.Hotel_reservation;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,21 +19,21 @@ public class HotelReservationSystem
         hotels.put(name, new Hotel(name));
     }
 
-    public void addRegularRate(String hotelName, String dayType, int rate)
+    public void addRate(String hotelName, String dayType, int rate)
     {
         Hotel hotel = hotels.get(hotelName);
         if (hotel != null) {
-            hotel.setRegularRate(dayType, rate);
+            hotel.setRate(dayType, rate);
         } else {
             System.out.println("Hotel " + hotelName + " not found.");
         }
     }
 
-    public int getRegularRate(String hotelName, String dayType)
+    public int getRate(String hotelName, String dayType)
     {
         Hotel hotel = hotels.get(hotelName);
         if (hotel != null) {
-            return hotel.getRegularRate(dayType);
+            return hotel.getRate(dayType);
         } else {
             System.out.println("Hotel " + hotelName + " not found.");
             return -1;
@@ -49,8 +48,7 @@ public class HotelReservationSystem
         for (Map.Entry<String, Hotel> entry : hotels.entrySet())
         {
             int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
-            if (totalRate < minTotalRate)
-            {
+            if (totalRate < minTotalRate) {
                 minTotalRate = totalRate;
                 cheapestHotel = entry.getKey();
             } else if (totalRate == minTotalRate && entry.getKey().compareTo(cheapestHotel) < 0) {
@@ -65,9 +63,10 @@ public class HotelReservationSystem
     {
         int totalRate = 0;
         LocalDate date = startDate;
-        while (!date.isAfter(endDate)) {
+        while (!date.isAfter(endDate))
+        {
             String dayType = getDayType(date);
-            totalRate += hotel.getRegularRate(dayType);
+            totalRate += hotel.getRate(dayType);
             date = date.plusDays(1);
         }
         return totalRate;
@@ -75,8 +74,6 @@ public class HotelReservationSystem
 
     private String getDayType(LocalDate date)
     {
-        return date.getDayOfWeek().getValue() >= 6 ? "weekend" : "weekday";
+        return date.getDayOfWeek().getValue() >= DayOfWeek.SATURDAY.getValue() ? "weekend" : "weekday";
     }
 }
-
-

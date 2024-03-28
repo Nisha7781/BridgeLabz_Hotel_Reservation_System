@@ -5,22 +5,22 @@ import java.util.Map;
 public class Hotel
 {
     private String name;
-    private Map<String, Integer> regularRates;
+    private Map<String, Integer> rates;
 
     public Hotel(String name)
     {
         this.name = name;
-        this.regularRates = new HashMap<>();
+        this.rates = new HashMap<>();
     }
 
-    public void setRegularRate(String dayType, int rate)
+    public void setRate(String dayType, int rate)
     {
-        regularRates.put(dayType, rate);
+        rates.put(dayType, rate);
     }
 
-    public int getRegularRate(String dayType)
+    public int getRate(String dayType)
     {
-        return regularRates.get(dayType);
+        return rates.get(dayType);
     }
 
     public String getName()
@@ -28,3 +28,7 @@ public class Hotel
         return name;
     }
 }
+
+
+
+
