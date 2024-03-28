@@ -3,6 +3,7 @@ package org.Hotel_reservation;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HotelReservationSystemTest {
 
@@ -53,7 +54,7 @@ public class HotelReservationSystemTest {
     }
 
     @Test
-    public void testFindCheapestBestRatedHotel() {
+    public void testFindCheapestBestRatedHotelForRegularCustomer() {
         HotelReservationSystem rs = new HotelReservationSystem();
 
         rs.addHotel("Lakewood", 3);
@@ -68,44 +69,59 @@ public class HotelReservationSystemTest {
         rs.addRegularRate("Ridgewood", "weekday", 220);
         rs.addRegularRate("Ridgewood", "weekend", 150);
 
-        assertEquals("Bridgewood, Rating: 4 and Total Rates: $200", rs.findCheapestBestRatedHotel(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
+        assertEquals("Bridgewood, Rating: 4 and Total Rates: $200", rs.findCheapestBestRatedHotelForRegularCustomer(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
     }
 
     @Test
-    public void testFindBestRatedHotel() {
+    public void testFindCheapestBestRatedHotelForRewardCustomer() {
         HotelReservationSystem rs = new HotelReservationSystem();
 
         rs.addHotel("Lakewood", 3);
-        rs.addRegularRate("Lakewood", "weekday", 110);
-        rs.addRegularRate("Lakewood", "weekend", 90);
+        rs.addRewardRate("Lakewood", "weekday", 80);
+        rs.addRewardRate("Lakewood", "weekend", 80);
 
         rs.addHotel("Bridgewood", 4);
-        rs.addRegularRate("Bridgewood", "weekday", 150);
-        rs.addRegularRate("Bridgewood", "weekend", 50);
+        rs.addRewardRate("Bridgewood", "weekday", 110);
+        rs.addRewardRate("Bridgewood", "weekend", 50);
 
         rs.addHotel("Ridgewood", 5);
-        rs.addRegularRate("Ridgewood", "weekday", 220);
-        rs.addRegularRate("Ridgewood", "weekend", 150);
+        rs.addRewardRate("Ridgewood", "weekday", 100);
+        rs.addRewardRate("Ridgewood", "weekend", 40);
 
-        assertEquals("Ridgewood & Total Rates $370", rs.findBestRatedHotel(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
+        assertEquals("Ridgewood, Rating: 5 and Total Rates: $140", rs.findCheapestBestRatedHotelForRewardCustomer(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
     }
 
     @Test
-    public void testFindBestRatedHotelForGivenDateRange() {
+    public void testInvalidCustomerType() {
         HotelReservationSystem rs = new HotelReservationSystem();
-
         rs.addHotel("Lakewood", 3);
         rs.addRegularRate("Lakewood", "weekday", 110);
         rs.addRegularRate("Lakewood", "weekend", 90);
 
-        rs.addHotel("Bridgewood", 4);
-        rs.addRegularRate("Bridgewood", "weekday", 150);
-        rs.addRegularRate("Bridgewood", "weekend", 50);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            rs.validateAndFindCheapestBestRatedHotel(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12), "invalid");
+        });
 
-        rs.addHotel("Ridgewood", 5);
-        rs.addRegularRate("Ridgewood", "weekday", 220);
-        rs.addRegularRate("Ridgewood", "weekend", 150);
+        String expectedMessage = "Invalid customer type: Please specify 'regular' or 'reward'.";
+        String actualMessage = exception.getMessage();
 
-        assertEquals("Ridgewood & Total Rates $370", rs.findBestRatedHotel(LocalDate.of(2020, 9, 11), LocalDate.of(2020, 9, 12)));
+        assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    public void testInvalidDateRange() {
+        HotelReservationSystem rs = new HotelReservationSystem();
+        rs.addHotel("Lakewood", 3);
+        rs.addRegularRate("Lakewood", "weekday", 110);
+        rs.addRegularRate("Lakewood", "weekend", 90);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            rs.validateAndFindCheapestBestRatedHotel(LocalDate.of(2020, 9, 12), LocalDate.of(2020, 9, 11), "regular");
+        });
+
+        String expectedMessage = "Invalid date range: End date must be after start date.";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(expectedMessage, actualMessage);
     }
 }

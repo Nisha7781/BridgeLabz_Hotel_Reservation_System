@@ -3,17 +3,14 @@ package org.Hotel_reservation;
 import java.time.*;
 import java.util.*;
 
-public class HotelReservationSystem
-{
+public class HotelReservationSystem {
     private Map<String, Hotel> hotels;
 
-    public HotelReservationSystem()
-    {
+    public HotelReservationSystem() {
         hotels = new HashMap<>();
     }
 
-    public void addHotel(String name, int rating)
-    {
+    public void addHotel(String name, int rating) {
         hotels.put(name, new Hotel(name, rating));
     }
 
@@ -55,14 +52,13 @@ public class HotelReservationSystem
         }
     }
 
-    public String findCheapestBestRatedHotel(LocalDate startDate, LocalDate endDate)
-    {
+    public String findCheapestBestRatedHotelForRegularCustomer(LocalDate startDate, LocalDate endDate) {
         int minTotalRate = Integer.MAX_VALUE;
         int maxRating = Integer.MIN_VALUE;
         String cheapestBestRatedHotel = "";
 
         for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
-            int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
+            int totalRate = calculateTotalRegularRate(entry.getValue(), startDate, endDate);
             int rating = entry.getValue().getRating();
             if (totalRate < minTotalRate || (totalRate == minTotalRate && rating > maxRating)) {
                 minTotalRate = totalRate;
@@ -74,12 +70,28 @@ public class HotelReservationSystem
         return cheapestBestRatedHotel + ", Rating: " + maxRating + " and Total Rates: $" + minTotalRate;
     }
 
-    private int calculateTotalRate(Hotel hotel, LocalDate startDate, LocalDate endDate)
-    {
+    public String findCheapestBestRatedHotelForRewardCustomer(LocalDate startDate, LocalDate endDate) {
+        int minTotalRate = Integer.MAX_VALUE;
+        int maxRating = Integer.MIN_VALUE;
+        String cheapestBestRatedHotel = "";
+
+        for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
+            int totalRate = calculateTotalRewardRate(entry.getValue(), startDate, endDate);
+            int rating = entry.getValue().getRating();
+            if (totalRate < minTotalRate || (totalRate == minTotalRate && rating > maxRating)) {
+                minTotalRate = totalRate;
+                maxRating = rating;
+                cheapestBestRatedHotel = entry.getKey();
+            }
+        }
+
+        return cheapestBestRatedHotel + ", Rating: " + maxRating + " and Total Rates: $" + minTotalRate;
+    }
+
+    private int calculateTotalRegularRate(Hotel hotel, LocalDate startDate, LocalDate endDate) {
         int totalRate = 0;
         LocalDate date = startDate;
-        while (!date.isAfter(endDate))
-        {
+        while (!date.isAfter(endDate)) {
             String dayType = getDayType(date);
             totalRate += hotel.getRegularRate(dayType);
             date = date.plusDays(1);
@@ -87,27 +99,36 @@ public class HotelReservationSystem
         return totalRate;
     }
 
-
-    public String findBestRatedHotel(LocalDate startDate, LocalDate endDate) {
-        int maxRating = Integer.MIN_VALUE;
-        String bestRatedHotel = "";
-        int minTotalRate = Integer.MAX_VALUE;
-
-        for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
-            Hotel hotel = entry.getValue();
-            int rating = hotel.getRating();
-            int totalRate = calculateTotalRate(hotel, startDate, endDate);
-
-            if (rating > maxRating || (rating == maxRating && totalRate < minTotalRate)) {
-                maxRating = rating;
-                minTotalRate = totalRate;
-                bestRatedHotel = hotel.getName() + " & Total Rates $" + minTotalRate;
-            }
+    private int calculateTotalRewardRate(Hotel hotel, LocalDate startDate, LocalDate endDate) {
+        int totalRate = 0;
+        LocalDate date = startDate;
+        while (!date.isAfter(endDate)) {
+            String dayType = getDayType(date);
+            totalRate += hotel.getRewardRate(dayType);
+            date = date.plusDays(1);
         }
-
-        return bestRatedHotel;
+        return totalRate;
     }
 
+    public String validateAndFindCheapestBestRatedHotel(LocalDate startDate, LocalDate endDate, String customerType) throws IllegalArgumentException {
+        if (startDate == null || endDate == null || customerType == null) {
+            throw new IllegalArgumentException("Invalid input: Dates and customer type cannot be null.");
+        }
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Invalid date range: End date must be after start date.");
+        }
+
+        if (!customerType.equalsIgnoreCase("regular") && !customerType.equalsIgnoreCase("reward")) {
+            throw new IllegalArgumentException("Invalid customer type: Please specify 'regular' or 'reward'.");
+        }
+
+        if (customerType.equalsIgnoreCase("regular")) {
+            return findCheapestBestRatedHotelForRegularCustomer(startDate, endDate);
+        } else {
+            return findCheapestBestRatedHotelForRewardCustomer(startDate, endDate);
+        }
+    }
 
     private String getDayType(LocalDate date)
     {
