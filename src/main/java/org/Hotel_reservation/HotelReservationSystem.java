@@ -1,9 +1,7 @@
 package org.Hotel_reservation;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.*;
+import java.util.*;
 
 public class HotelReservationSystem
 {
@@ -40,26 +38,23 @@ public class HotelReservationSystem
         }
     }
 
-    public String findCheapestHotel(LocalDate startDate, LocalDate endDate)
+    public String findCheapestBestRatedHotel(LocalDate startDate, LocalDate endDate)
     {
         int minTotalRate = Integer.MAX_VALUE;
-        StringBuilder cheapestHotels = new StringBuilder();
+        int maxRating = Integer.MIN_VALUE;
+        String cheapestBestRatedHotel = "";
 
-        for (Map.Entry<String, Hotel> entry : hotels.entrySet())
-        {
+        for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
             int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
-            if (totalRate < minTotalRate)
-            {
+            int rating = entry.getValue().getRating();
+            if (totalRate < minTotalRate || (totalRate == minTotalRate && rating > maxRating)) {
                 minTotalRate = totalRate;
-                cheapestHotels = new StringBuilder(entry.getKey());
-            }
-            else if (totalRate == minTotalRate)
-            {
-                cheapestHotels.append(" and ").append(entry.getKey());
+                maxRating = rating;
+                cheapestBestRatedHotel = entry.getKey();
             }
         }
 
-        return cheapestHotels + " with Total Rates: $" + minTotalRate;
+        return cheapestBestRatedHotel + ", Rating: " + maxRating + " and Total Rates: $" + minTotalRate;
     }
 
     private int calculateTotalRate(Hotel hotel, LocalDate startDate, LocalDate endDate)

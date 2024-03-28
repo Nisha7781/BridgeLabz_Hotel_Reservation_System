@@ -33,8 +33,7 @@ public class Hotel
         return name;
     }
 
-    public int getRating()
-    {
+    public int getRating() {
         return rating;
     }
 }
