@@ -14,9 +14,9 @@ public class HotelReservationSystem
         hotels = new HashMap<>();
     }
 
-    public void addHotel(String name)
+    public void addHotel(String name, int rating)
     {
-        hotels.put(name, new Hotel(name));
+        hotels.put(name, new Hotel(name, rating));
     }
 
     public void addRate(String hotelName, String dayType, int rate)
@@ -48,10 +48,13 @@ public class HotelReservationSystem
         for (Map.Entry<String, Hotel> entry : hotels.entrySet())
         {
             int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
-            if (totalRate < minTotalRate) {
+            if (totalRate < minTotalRate)
+            {
                 minTotalRate = totalRate;
                 cheapestHotels = new StringBuilder(entry.getKey());
-            } else if (totalRate == minTotalRate) {
+            }
+            else if (totalRate == minTotalRate)
+            {
                 cheapestHotels.append(" and ").append(entry.getKey());
             }
         }
@@ -63,7 +66,8 @@ public class HotelReservationSystem
     {
         int totalRate = 0;
         LocalDate date = startDate;
-        while (!date.isAfter(endDate)) {
+        while (!date.isAfter(endDate))
+        {
             String dayType = getDayType(date);
             totalRate += hotel.getRate(dayType);
             date = date.plusDays(1);

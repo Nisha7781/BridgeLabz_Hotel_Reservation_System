@@ -8,11 +8,13 @@ import java.util.Map;
 public class Hotel
 {
     private String name;
+    private int rating;
     private Map<String, Integer> rates;
 
-    public Hotel(String name)
+    public Hotel(String name, int rating)
     {
         this.name = name;
+        this.rating = rating;
         this.rates = new HashMap<>();
     }
 
@@ -30,7 +32,9 @@ public class Hotel
     {
         return name;
     }
+
+    public int getRating()
+    {
+        return rating;
+    }
 }
-
-
-
