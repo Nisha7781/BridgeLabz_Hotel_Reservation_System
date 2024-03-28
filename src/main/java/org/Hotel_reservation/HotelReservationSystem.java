@@ -1,5 +1,8 @@
+
 package org.Hotel_reservation;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,4 +40,43 @@ public class HotelReservationSystem
             return -1;
         }
     }
+
+    public String findCheapestHotel(LocalDate startDate, LocalDate endDate)
+    {
+        int minTotalRate = Integer.MAX_VALUE;
+        String cheapestHotel = "";
+
+        for (Map.Entry<String, Hotel> entry : hotels.entrySet())
+        {
+            int totalRate = calculateTotalRate(entry.getValue(), startDate, endDate);
+            if (totalRate < minTotalRate)
+            {
+                minTotalRate = totalRate;
+                cheapestHotel = entry.getKey();
+            } else if (totalRate == minTotalRate && entry.getKey().compareTo(cheapestHotel) < 0) {
+                cheapestHotel = entry.getKey();
+            }
+        }
+
+        return cheapestHotel + ", Total Rates: $" + minTotalRate;
+    }
+
+    private int calculateTotalRate(Hotel hotel, LocalDate startDate, LocalDate endDate)
+    {
+        int totalRate = 0;
+        LocalDate date = startDate;
+        while (!date.isAfter(endDate)) {
+            String dayType = getDayType(date);
+            totalRate += hotel.getRegularRate(dayType);
+            date = date.plusDays(1);
+        }
+        return totalRate;
+    }
+
+    private String getDayType(LocalDate date)
+    {
+        return date.getDayOfWeek().getValue() >= 6 ? "weekend" : "weekday";
+    }
 }
+
+
