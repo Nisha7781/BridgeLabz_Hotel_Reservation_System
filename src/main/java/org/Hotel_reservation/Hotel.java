@@ -5,31 +5,36 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Hotel
-{
+public class Hotel {
     private String name;
     private int rating;
-    private Map<String, Integer> rates;
+    private Map<String, Integer> regularRates;
+    private Map<String, Integer> rewardRates;
 
-    public Hotel(String name, int rating)
-    {
+    public Hotel(String name, int rating) {
         this.name = name;
         this.rating = rating;
-        this.rates = new HashMap<>();
+        this.regularRates = new HashMap<>();
+        this.rewardRates = new HashMap<>();
     }
 
-    public void setRate(String dayType, int rate)
-    {
-        rates.put(dayType, rate);
+    public void setRegularRate(String dayType, int rate) {
+        regularRates.put(dayType, rate);
     }
 
-    public int getRate(String dayType)
-    {
-        return rates.get(dayType);
+    public int getRegularRate(String dayType) {
+        return regularRates.get(dayType);
     }
 
-    public String getName()
-    {
+    public void setRewardRate(String dayType, int rate) {
+        rewardRates.put(dayType, rate);
+    }
+
+    public int getRewardRate(String dayType) {
+        return rewardRates.get(dayType);
+    }
+
+    public String getName() {
         return name;
     }
 

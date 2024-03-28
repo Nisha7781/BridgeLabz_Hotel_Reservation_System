@@ -17,21 +17,38 @@ public class HotelReservationSystem
         hotels.put(name, new Hotel(name, rating));
     }
 
-    public void addRate(String hotelName, String dayType, int rate)
-    {
+    public void addRegularRate(String hotelName, String dayType, int rate) {
         Hotel hotel = hotels.get(hotelName);
         if (hotel != null) {
-            hotel.setRate(dayType, rate);
+            hotel.setRegularRate(dayType, rate);
         } else {
             System.out.println("Hotel " + hotelName + " not found.");
         }
     }
 
-    public int getRate(String hotelName, String dayType)
-    {
+    public void addRewardRate(String hotelName, String dayType, int rate) {
         Hotel hotel = hotels.get(hotelName);
         if (hotel != null) {
-            return hotel.getRate(dayType);
+            hotel.setRewardRate(dayType, rate);
+        } else {
+            System.out.println("Hotel " + hotelName + " not found.");
+        }
+    }
+
+    public int getRegularRate(String hotelName, String dayType) {
+        Hotel hotel = hotels.get(hotelName);
+        if (hotel != null) {
+            return hotel.getRegularRate(dayType);
+        } else {
+            System.out.println("Hotel " + hotelName + " not found.");
+            return -1;
+        }
+    }
+
+    public int getRewardRate(String hotelName, String dayType) {
+        Hotel hotel = hotels.get(hotelName);
+        if (hotel != null) {
+            return hotel.getRewardRate(dayType);
         } else {
             System.out.println("Hotel " + hotelName + " not found.");
             return -1;
@@ -64,7 +81,7 @@ public class HotelReservationSystem
         while (!date.isAfter(endDate))
         {
             String dayType = getDayType(date);
-            totalRate += hotel.getRate(dayType);
+            totalRate += hotel.getRegularRate(dayType);
             date = date.plusDays(1);
         }
         return totalRate;
