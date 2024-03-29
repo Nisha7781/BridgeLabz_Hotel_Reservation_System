@@ -6,17 +6,21 @@ import java.util.*;
 public class HotelReservationSystem {
     private Map<String, Hotel> hotels;
 
-    public HotelReservationSystem() {
+    public HotelReservationSystem()
+    {
         hotels = new HashMap<>();
     }
 
-    public void addHotel(String name, int rating) {
+    public void addHotel(String name, int rating)
+    {
         hotels.put(name, new Hotel(name, rating));
     }
 
-    public void addRegularRate(String hotelName, String dayType, int rate) {
+    public void addRegularRate(String hotelName, String dayType, int rate)
+    {
         Hotel hotel = hotels.get(hotelName);
-        if (hotel != null) {
+        if (hotel != null)
+        {
             hotel.setRegularRate(dayType, rate);
         } else {
             System.out.println("Hotel " + hotelName + " not found.");
@@ -71,21 +75,22 @@ public class HotelReservationSystem {
     }
 
     public String findCheapestBestRatedHotelForRewardCustomer(LocalDate startDate, LocalDate endDate) {
-        int minTotalRate = Integer.MAX_VALUE;
-        int maxRating = Integer.MIN_VALUE;
-        String cheapestBestRatedHotel = "";
+        Optional<String> cheapestBestRatedHotel = hotels.entrySet().stream()
+                .map(entry -> {
+                    int totalRate = calculateTotalRewardRate(entry.getValue(), startDate, endDate);
+                    return Map.entry(entry.getKey(), totalRate);
+                })
+                .min(Comparator.comparingInt(Map.Entry::getValue))
+                .map(Map.Entry::getKey);
 
-        for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
-            int totalRate = calculateTotalRewardRate(entry.getValue(), startDate, endDate);
-            int rating = entry.getValue().getRating();
-            if (totalRate < minTotalRate || (totalRate == minTotalRate && rating > maxRating)) {
-                minTotalRate = totalRate;
-                maxRating = rating;
-                cheapestBestRatedHotel = entry.getKey();
-            }
+        if (cheapestBestRatedHotel.isPresent()) {
+            String hotelName = cheapestBestRatedHotel.get();
+            int rating = hotels.get(hotelName).getRating();
+            int totalRate = calculateTotalRewardRate(hotels.get(hotelName), startDate, endDate);
+            return hotelName + ", Rating: " + rating + " and Total Rates: $" + totalRate;
+        } else {
+            return "No hotels found.";
         }
-
-        return cheapestBestRatedHotel + ", Rating: " + maxRating + " and Total Rates: $" + minTotalRate;
     }
 
     private int calculateTotalRegularRate(Hotel hotel, LocalDate startDate, LocalDate endDate) {
