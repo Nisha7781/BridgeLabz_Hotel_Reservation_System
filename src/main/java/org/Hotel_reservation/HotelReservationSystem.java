@@ -56,22 +56,25 @@ public class HotelReservationSystem {
         }
     }
 
-    public String findCheapestBestRatedHotelForRegularCustomer(LocalDate startDate, LocalDate endDate) {
-        int minTotalRate = Integer.MAX_VALUE;
-        int maxRating = Integer.MIN_VALUE;
-        String cheapestBestRatedHotel = "";
+    public String findCheapestBestRatedHotelForRegularCustomer(LocalDate startDate, LocalDate endDate)
+    {
+        Optional<String> cheapestBestRatedHotel = hotels.entrySet().stream()
+                .map(entry -> {
+                    int totalRate = calculateTotalRegularRate(entry.getValue(), startDate, endDate);
+                    return Map.entry(entry.getKey(), totalRate);
+                })
+                .min(Comparator.comparingInt(Map.Entry::getValue))
+                .map(Map.Entry::getKey);
 
-        for (Map.Entry<String, Hotel> entry : hotels.entrySet()) {
-            int totalRate = calculateTotalRegularRate(entry.getValue(), startDate, endDate);
-            int rating = entry.getValue().getRating();
-            if (totalRate < minTotalRate || (totalRate == minTotalRate && rating > maxRating)) {
-                minTotalRate = totalRate;
-                maxRating = rating;
-                cheapestBestRatedHotel = entry.getKey();
-            }
+        if (cheapestBestRatedHotel.isPresent())
+        {
+            String hotelName = cheapestBestRatedHotel.get();
+            int rating = hotels.get(hotelName).getRating();
+            int totalRate = calculateTotalRegularRate(hotels.get(hotelName), startDate, endDate);
+            return hotelName + ", Rating: " + rating + " and Total Rates: $" + totalRate;
+        } else {
+            return "No hotels found.";
         }
-
-        return cheapestBestRatedHotel + ", Rating: " + maxRating + " and Total Rates: $" + minTotalRate;
     }
 
     public String findCheapestBestRatedHotelForRewardCustomer(LocalDate startDate, LocalDate endDate) {
